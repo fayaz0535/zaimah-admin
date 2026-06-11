@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/api/health"];
 const SESSION_COOKIE = "zaimah-admin-session";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+  if (pathname.startsWith("/login") || pathname.startsWith("/api/auth")) {
     return NextResponse.next();
   }
 
@@ -22,5 +21,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!login|api/auth|_next/static|_next/image|favicon.ico).*)",
+  ],
 };
