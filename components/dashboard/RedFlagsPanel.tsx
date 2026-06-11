@@ -1,9 +1,10 @@
+"use client";
+
 const FLAGS = [
   {
     color: "#EF4444",
     bg: "#FEF2F2",
     border: "#FECACA",
-    icon: "🔴",
     label: "Disk at 82%",
     detail: "Run: docker system prune",
   },
@@ -11,7 +12,6 @@ const FLAGS = [
     color: "#F59E0B",
     bg: "#FFFBEB",
     border: "#FDE68A",
-    icon: "🟡",
     label: "WhatsApp not in live mode",
     detail: "Submit to Meta Business Manager",
   },
@@ -19,31 +19,28 @@ const FLAGS = [
     color: "#4F46E5",
     bg: "#EEF2FF",
     border: "#C7D2FE",
-    icon: "🔵",
     label: "SprintX auth is stub",
-    detail: "Pre-launch only",
+    detail: "Pre-launch only — replace before go-live",
   },
   {
     color: "#4F46E5",
     bg: "#EEF2FF",
     border: "#C7D2FE",
-    icon: "🔵",
     label: "UptimeRobot not configured",
     detail: "Add monitoring for all 3 services",
+  },
+  {
+    color: "#6B7280",
+    bg: "#F9FAFB",
+    border: "#E4E4E7",
+    label: "KPI API not connected",
+    detail: "funnl metrics showing — placeholder",
   },
 ];
 
 export default function RedFlagsPanel() {
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #E4E4E7",
-        borderRadius: 12,
-        overflow: "hidden",
-        marginTop: 16,
-      }}
-    >
+    <div style={{ background: "#fff", border: "1px solid #E4E4E7", borderRadius: 10, overflow: "hidden" }}>
       <div
         style={{
           padding: "14px 16px",
@@ -53,7 +50,7 @@ export default function RedFlagsPanel() {
           justifyContent: "space-between",
         }}
       >
-        <span style={{ fontSize: 13, fontWeight: 600, color: "#111" }}>Red Flags</span>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "#111" }}>Red flags to resolve</span>
         <span
           style={{
             fontSize: 10,
@@ -78,16 +75,10 @@ export default function RedFlagsPanel() {
               border: `1px solid ${flag.border}`,
               borderRadius: 8,
               padding: "8px 12px",
-              display: "flex",
-              alignItems: "flex-start",
-              gap: 8,
             }}
           >
-            <span style={{ fontSize: 12, flexShrink: 0 }}>{flag.icon}</span>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: flag.color }}>{flag.label}</div>
-              <div style={{ fontSize: 11, color: "#6B7280", marginTop: 1 }}>{flag.detail}</div>
-            </div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: flag.color }}>{flag.label}</div>
+            <div style={{ fontSize: 11, color: "#6B7280", marginTop: 2 }}>{flag.detail}</div>
           </div>
         ))}
       </div>

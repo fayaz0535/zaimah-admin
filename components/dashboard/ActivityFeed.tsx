@@ -1,67 +1,86 @@
+"use client";
+
 const EVENTS = [
-  { type: "booking",  dot: "#10B981", message: "New booking — Aya Beauty, 3 services", product: "funnl",      time: "2 min ago" },
-  { type: "deploy",   dot: "#10B981", message: "SprintX v0.9.2 deployed successfully", product: "SprintX",    time: "18 min ago" },
-  { type: "alert",    dot: "#F59E0B", message: "WhatsApp rate limit reached — 10 min backoff", product: "funnl", time: "34 min ago" },
-  { type: "booking",  dot: "#10B981", message: "Booking confirmed — Sarah Al Mansoori", product: "funnl",     time: "51 min ago" },
-  { type: "system",   dot: "#4F46E5", message: "Health check passed — all 3 services up", product: "System", time: "1 hr ago" },
-  { type: "error",    dot: "#EF4444", message: "No-show — booking ID bk_9fa2 not attended", product: "funnl", time: "2 hr ago" },
-  { type: "deploy",   dot: "#10B981", message: "zaimahtech.ae rebuild completed (Nginx cache cleared)", product: "Landing", time: "3 hr ago" },
-  { type: "alert",    dot: "#F59E0B", message: "Disk usage crossed 80% threshold", product: "System",        time: "4 hr ago" },
-  { type: "booking",  dot: "#10B981", message: "Viewing booked — Al Barsha 2BR apartment", product: "funnl", time: "5 hr ago" },
-  { type: "system",   dot: "#4F46E5", message: "Server reboot completed — all containers up", product: "System", time: "Yesterday" },
+  {
+    id: 1,
+    dot: "#10B981",
+    text: "funnl — Shave Crave booked appointment via WhatsApp",
+    time: "2m ago",
+  },
+  {
+    id: 2,
+    dot: "#10B981",
+    text: "funnl — AI replied to Sheik Salon inquiry in 4s",
+    time: "11m ago",
+  },
+  {
+    id: 3,
+    dot: "#4F46E5",
+    text: "Admin — Docker containers restarted (scheduled)",
+    time: "34m ago",
+  },
+  {
+    id: 4,
+    dot: "#F59E0B",
+    text: "funnl — WhatsApp sandbox rate limit hit (200/day)",
+    time: "1h ago",
+  },
+  {
+    id: 5,
+    dot: "#10B981",
+    text: "SprintX — Phase 1 sprint board accessed by ZAIMAH team",
+    time: "2h ago",
+  },
+  {
+    id: 6,
+    dot: "#4F46E5",
+    text: "Admin — SSL certificate auto-renewed (valid 90d)",
+    time: "4h ago",
+  },
+  {
+    id: 7,
+    dot: "#EF4444",
+    text: "Server — Disk usage crossed 80% threshold (now 82%)",
+    time: "6h ago",
+  },
+  {
+    id: 8,
+    dot: "#10B981",
+    text: "zaimahtech.ae — Uptime check passed (200 OK, 240ms)",
+    time: "8h ago",
+  },
 ];
 
 export default function ActivityFeed() {
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #E4E4E7",
-        borderRadius: 12,
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          padding: "14px 16px",
-          borderBottom: "1px solid #E4E4E7",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span style={{ fontSize: 13, fontWeight: 600, color: "#111" }}>Activity Feed</span>
-        <span style={{ fontSize: 11, color: "#9CA3AF" }}>Last 10 events</span>
+    <div style={{ background: "#fff", border: "1px solid #E4E4E7", borderRadius: 10, padding: "14px 16px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: "#111" }}>Activity feed</div>
+          <div style={{ fontSize: 10, color: "#9CA3AF", marginTop: 1 }}>Last 8 events</div>
+        </div>
+        <span style={{ fontSize: 11, color: "#4F46E5", cursor: "pointer" }}>View all →</span>
       </div>
 
-      <div>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         {EVENTS.map((ev, i) => (
           <div
-            key={i}
+            key={ev.id}
             style={{
               display: "flex",
-              alignItems: "flex-start",
               gap: 10,
-              padding: "10px 16px",
-              borderBottom: i < EVENTS.length - 1 ? "1px solid #F3F4F6" : "none",
+              paddingTop: i === 0 ? 0 : 10,
+              paddingBottom: i === EVENTS.length - 1 ? 0 : 10,
+              borderBottom: i === EVENTS.length - 1 ? "none" : "1px solid #F3F4F6",
             }}
           >
-            <span
-              style={{
-                marginTop: 5,
-                width: 7,
-                height: 7,
-                borderRadius: "50%",
-                background: ev.dot,
-                flexShrink: 0,
-              }}
-            />
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 12, color: "#111", margin: 0, lineHeight: 1.4 }}>{ev.message}</p>
-              <p style={{ fontSize: 11, color: "#9CA3AF", margin: "2px 0 0" }}>
-                {ev.product} · {ev.time}
-              </p>
+            <div style={{ paddingTop: 3, flexShrink: 0 }}>
+              <div style={{ width: 7, height: 7, borderRadius: "50%", background: ev.dot }} />
             </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 11, color: "#374151", lineHeight: 1.5 }}>{ev.text}</div>
+            </div>
+            <div style={{ fontSize: 10, color: "#9CA3AF", flexShrink: 0, paddingTop: 2 }}>{ev.time}</div>
           </div>
         ))}
       </div>

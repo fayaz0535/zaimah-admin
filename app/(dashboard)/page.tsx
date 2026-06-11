@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { RefreshCw, Plus, AlertTriangle, Zap } from "lucide-react";
+import { RefreshCw, Plus, Server, Boxes, Activity } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { HealthReport } from "@/lib/health";
 import ProductCards from "@/components/dashboard/ProductCards";
 import InfraStrip from "@/components/dashboard/InfraStrip";
@@ -9,10 +10,10 @@ import ActivityFeed from "@/components/dashboard/ActivityFeed";
 import RedFlagsPanel from "@/components/dashboard/RedFlagsPanel";
 
 const DEFAULT_REPORT: HealthReport = {
-  funnl:    { status: "up", responseTime: 0 },
-  sprintx:  { status: "up", responseTime: 0 },
-  landing:  { status: "up", responseTime: 0 },
-  server:   { cpu: 8, ram: { used: 1.8, total: 3.7 }, disk: 82, containers: 9 },
+  funnl:   { status: "up", responseTime: 0 },
+  sprintx: { status: "up", responseTime: 0 },
+  landing: { status: "up", responseTime: 0 },
+  server:  { cpu: 8, ram: { used: 1.8, total: 3.7 }, disk: 82, containers: 9 },
   checkedAt: new Date().toISOString(),
 };
 
@@ -35,28 +36,22 @@ function formatRefreshTime(iso: string) {
   });
 }
 
-interface KPICardProps {
-  label: string;
-  value: string;
-  sub?: string;
-  color?: string;
-}
-
-function KPICard({ label, value, sub, color = "#4F46E5" }: KPICardProps) {
+function SectionHeader({ icon: Icon, label, action }: { icon: LucideIcon; label: string; action?: string }) {
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #E4E4E7",
-        borderRadius: 10,
-        padding: "14px 16px",
-      }}
-    >
-      <div style={{ fontSize: 11, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+      <span
+        style={{
+          fontSize: 10, fontWeight: 700, color: "#9CA3AF",
+          letterSpacing: "1px", textTransform: "uppercase",
+          display: "flex", alignItems: "center", gap: 6,
+        }}
+      >
+        <Icon size={12} />
         {label}
-      </div>
-      <div className="text-xl lg:text-2xl font-bold" style={{ color, marginBottom: 2 }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: "#6B7280" }}>{sub}</div>}
+      </span>
+      {action && (
+        <span style={{ fontSize: 11, color: "#4F46E5", cursor: "pointer" }}>{action}</span>
+      )}
     </div>
   );
 }
@@ -81,149 +76,71 @@ export default function OverviewPage() {
     return () => clearInterval(id);
   }, [refresh]);
 
-  const diskAlert = report.server.disk >= 75;
-  const diskCritical = report.server.disk >= 90;
-
   return (
     <div style={{ maxWidth: 1400, margin: "0 auto" }}>
 
-      {/* Section 1 — Page header: stacks on mobile, row on sm+ */}
+      {/* Page header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
         <div>
-          <h1 className="text-base sm:text-lg lg:text-xl font-bold" style={{ color: "#111", margin: 0 }}>
-            Platform Overview
-          </h1>
-          <p style={{ fontSize: 12, color: "#6B7280", margin: "3px 0 0" }}>
+          <h1 style={{ fontSize: 16, fontWeight: 600, color: "#111", margin: 0 }}>Platform Overview</h1>
+          <p style={{ fontSize: 12, color: "#6B7280", margin: "2px 0 0" }}>
             All systems · {formatUAEDate()} · Last refreshed {formatRefreshTime(report.checkedAt)} UAE
           </p>
         </div>
-
-        {/* Buttons: full-width stacked on mobile, auto-width row on sm+ */}
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <button
             onClick={refresh}
             disabled={refreshing}
             className="flex items-center justify-center gap-1.5 w-full sm:w-auto min-h-[44px] sm:min-h-0"
             style={{
-              padding: "8px 14px",
-              background: "#fff", border: "1px solid #E4E4E7", borderRadius: 7,
-              fontSize: 13, fontWeight: 500, color: "#374151", cursor: "pointer",
+              padding: "7px 12px", background: "#fff", border: "1px solid #E4E4E7",
+              borderRadius: 7, fontSize: 12, fontWeight: 500, color: "#374151", cursor: "pointer",
             }}
           >
-            <RefreshCw size={13} style={{ animation: refreshing ? "spin 1s linear infinite" : "none" }} />
+            <RefreshCw size={12} style={{ animation: refreshing ? "spin 1s linear infinite" : "none" }} />
             Refresh
           </button>
           <button
             className="flex items-center justify-center gap-1.5 w-full sm:w-auto min-h-[44px] sm:min-h-0"
             style={{
-              padding: "8px 14px",
-              background: "#4F46E5", border: "none", borderRadius: 7,
-              fontSize: 13, fontWeight: 500, color: "#fff", cursor: "pointer",
+              padding: "7px 12px", background: "#4F46E5", border: "none",
+              borderRadius: 7, fontSize: 12, fontWeight: 500, color: "#fff", cursor: "pointer",
             }}
           >
-            <Plus size={13} />
+            <Plus size={12} />
             New Client
           </button>
         </div>
       </div>
 
-      {/* Section 2 — Alert banners */}
-      {(diskAlert || true) && (
-        <div className="flex flex-col gap-2 mb-5">
-          {(diskCritical || diskAlert) && (
-            <div
-              className="flex items-start sm:items-center gap-2.5"
-              style={{
-                padding: "10px 14px",
-                background: diskCritical ? "#FEF2F2" : "#FFFBEB",
-                border: `1px solid ${diskCritical ? "#FECACA" : "#FDE68A"}`,
-                borderRadius: 8, fontSize: 13,
-                color: diskCritical ? "#EF4444" : "#D97706",
-              }}
-            >
-              <AlertTriangle size={15} className="shrink-0 mt-0.5 sm:mt-0" />
-              <span>
-                Disk space at {report.server.disk}% on primary VPS —&nbsp;
-                {diskCritical ? "Critical! Clean up immediately." : "At current growth rate disk will reach 95% in ~14 days"}
-              </span>
-            </div>
-          )}
-          <div
-            className="flex items-start sm:items-center gap-2.5"
-            style={{
-              padding: "10px 14px",
-              background: "#FFFBEB", border: "1px solid #FDE68A",
-              borderRadius: 8, fontSize: 13, color: "#D97706",
-            }}
-          >
-            <Zap size={15} className="shrink-0 mt-0.5 sm:mt-0" />
-            <span>funnl WhatsApp still in sandbox mode — Submit for live mode approval</span>
+      {/* Infrastructure */}
+      <section style={{ marginBottom: 20 }}>
+        <SectionHeader icon={Server} label="Infrastructure — Hetzner VPS 62.238.22.128" action="View details →" />
+        <InfraStrip data={report.server} />
+      </section>
+
+      {/* Products */}
+      <section style={{ marginBottom: 20 }}>
+        <SectionHeader icon={Boxes} label="SaaS Products" />
+        <ProductCards report={report} />
+      </section>
+
+      {/* Activity */}
+      <section>
+        <SectionHeader icon={Activity} label="Platform Activity" />
+        <div className="flex flex-col lg:flex-row gap-4">
+          <div className="flex-1 min-w-0">
+            <ActivityFeed />
+          </div>
+          <div className="w-full lg:w-[280px] lg:shrink-0">
+            <RedFlagsPanel />
           </div>
         </div>
-      )}
-
-      {/* Section 3 — KPI strip: 2×2 on mobile/tablet, 4 columns on desktop */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        <KPICard label="Active Clients"  value="—" sub="funnl CRM"            color="#4F46E5" />
-        <KPICard label="Bookings Today"  value="—" sub="All salons"            color="#10B981" />
-        <KPICard label="WA Messages"     value="—" sub="Total sent + received" color="#00C9A7" />
-        <KPICard label="AI Quality Avg"  value="—" sub="Chat rating score"     color="#F59E0B" />
-      </div>
-
-      {/* Section 4 — Product cards */}
-      <ProductCards report={report} />
-
-      {/* Section 5 — Infrastructure strip */}
-      <InfraStrip data={report.server} />
-
-      {/* Section 6 — Two column: stacked on mobile/tablet, side-by-side on desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-4">
-        <ActivityFeed />
-        <div>
-          <ClientsWidget />
-          <RedFlagsPanel />
-        </div>
-      </div>
+      </section>
 
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
-    </div>
-  );
-}
-
-function ClientsWidget() {
-  const CLIENTS = [
-    { name: "Aya Beauty Lounge",    sector: "Salon",       status: "active",   color: "#10B981" },
-    { name: "Al Jouri Medical Spa", sector: "Healthcare",  status: "active",   color: "#10B981" },
-    { name: "Al Reem Properties",   sector: "Real Estate", status: "active",   color: "#10B981" },
-    { name: "Taste Arabia",         sector: "F&B",         status: "trial",    color: "#F59E0B" },
-    { name: "Nada Wellness Studio", sector: "Wellness",    status: "inactive", color: "#9CA3AF" },
-  ];
-  return (
-    <div style={{ background: "#fff", border: "1px solid #E4E4E7", borderRadius: 12, overflow: "hidden" }}>
-      <div style={{ padding: "14px 16px", borderBottom: "1px solid #E4E4E7", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ fontSize: 13, fontWeight: 600, color: "#111" }}>Active Clients</span>
-        <a href="/clients" style={{ fontSize: 11, color: "#4F46E5", textDecoration: "none" }}>View all →</a>
-      </div>
-      {CLIENTS.map((c, i) => (
-        <div
-          key={i}
-          style={{
-            padding: "9px 16px",
-            borderBottom: i < CLIENTS.length - 1 ? "1px solid #F3F4F6" : "none",
-            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8,
-          }}
-        >
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 500, color: "#111" }}>{c.name}</div>
-            <div style={{ fontSize: 11, color: "#9CA3AF" }}>{c.sector}</div>
-          </div>
-          <span style={{ fontSize: 10, fontWeight: 600, color: c.color, background: c.color + "18", borderRadius: 20, padding: "2px 8px", flexShrink: 0 }}>
-            {c.status}
-          </span>
-        </div>
-      ))}
     </div>
   );
 }
