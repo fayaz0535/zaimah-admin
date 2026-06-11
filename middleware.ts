@@ -6,7 +6,7 @@ const SESSION_COOKIE = "zaimah-admin-session";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith("/login") || pathname.startsWith("/api/auth")) {
+  if (pathname.startsWith("/login") || pathname.startsWith("/api/auth") || pathname.startsWith("/api/health")) {
     return NextResponse.next();
   }
 
