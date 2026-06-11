@@ -1,0 +1,23 @@
+name: zaimah-admin
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zaimah_admin
+    restart: always
+    ports:
+      - "3003:3000"
+    environment:
+      - NODE_ENV=production
+      - TZ=Asia/Dubai
+      - ADMIN_EMAIL=admin@zaimahtech.ae
+      - ADMIN_PASSWORD=ZaimahAdmin@2024
+      - SESSION_SECRET=zaimah-admin-secret-2024
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
