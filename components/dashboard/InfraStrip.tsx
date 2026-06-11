@@ -51,7 +51,7 @@ export default function InfraStrip({ data }: InfraStripProps) {
     {
       label: "Disk",
       value: `${data.disk}%`,
-      sub: data.disk >= 90 ? "Critical — clean up now" : data.disk >= 75 ? "Getting full — monitor closely" : "Healthy",
+      sub: data.disk >= 90 ? "Critical — clean up now" : data.disk >= 75 ? "Getting full — monitor" : "Healthy",
       pct: data.disk,
       amber: 75,
       red: 90,
@@ -67,21 +67,20 @@ export default function InfraStrip({ data }: InfraStripProps) {
   ];
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }}>
+    /* 2-col on mobile/tablet → 4-col on desktop */
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
       {cards.map((card) => (
         <div
           key={card.label}
           style={{
-            background: "#fff",
-            border: "1px solid #E4E4E7",
-            borderRadius: 10,
-            padding: "14px 16px",
+            background: "#fff", border: "1px solid #E4E4E7",
+            borderRadius: 10, padding: "14px 16px",
           }}
         >
           <div style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 500, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>
             {card.label}
           </div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: "#111", marginBottom: 4 }}>{card.value}</div>
+          <div className="text-xl lg:text-2xl font-bold" style={{ color: "#111", marginBottom: 3 }}>{card.value}</div>
           <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 10 }}>{card.sub}</div>
           <ProgressBar value={card.pct} amber={card.amber} red={card.red} />
         </div>

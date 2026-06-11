@@ -27,15 +27,12 @@ const CARDS: ProductCardDef[] = [
     color: "#5B5BF6",
     icon: "💬",
     metrics: (r) => [
-      { label: "Active clients",  value: "—" },
-      { label: "Bookings today",  value: "—" },
-      { label: "Total messages",  value: "—" },
-      { label: "Uptime",          value: r.funnl.status === "up" ? `${r.funnl.responseTime}ms` : "Down" },
+      { label: "Active clients", value: "—" },
+      { label: "Bookings today", value: "—" },
+      { label: "Total messages", value: "—" },
+      { label: "Uptime",         value: r.funnl.status === "up" ? `${r.funnl.responseTime}ms` : "Down" },
     ],
-    alert: (r) =>
-      r.funnl.status !== "up"
-        ? { level: "red", text: "Service unreachable" }
-        : null,
+    alert: (r) => r.funnl.status !== "up" ? { level: "red", text: "Service unreachable" } : null,
   },
   {
     id: "sprintx",
@@ -45,10 +42,10 @@ const CARDS: ProductCardDef[] = [
     color: "#00C9A7",
     icon: "⚡",
     metrics: (r) => [
-      { label: "Active tenants",  value: "—" },
-      { label: "Sprints run",     value: "—" },
-      { label: "AI agents",       value: "—" },
-      { label: "Auth status",     value: r.sprintx.status === "up" ? "Stub (pre-launch)" : "Down" },
+      { label: "Active tenants", value: "—" },
+      { label: "Sprints run",    value: "—" },
+      { label: "AI agents",      value: "—" },
+      { label: "Auth status",    value: r.sprintx.status === "up" ? "Stub (pre-launch)" : "Down" },
     ],
     alert: () => ({ level: "amber", text: "Auth is stub — pre-launch only" }),
   },
@@ -60,15 +57,12 @@ const CARDS: ProductCardDef[] = [
     color: "#4F46E5",
     icon: "🌐",
     metrics: (r) => [
-      { label: "HTTP status",  value: r.landing.status === "up" ? "200 OK" : "Down" },
-      { label: "Stack",        value: "Next.js 14" },
-      { label: "Containers",   value: "1" },
-      { label: "Uptime",       value: r.landing.status === "up" ? `${r.landing.responseTime}ms` : "Down" },
+      { label: "HTTP status", value: r.landing.status === "up" ? "200 OK" : "Down" },
+      { label: "Stack",       value: "Next.js 14" },
+      { label: "Containers",  value: "1" },
+      { label: "Uptime",      value: r.landing.status === "up" ? `${r.landing.responseTime}ms` : "Down" },
     ],
-    alert: (r) =>
-      r.landing.status !== "up"
-        ? { level: "red", text: "Landing page unreachable" }
-        : null,
+    alert: (r) => r.landing.status !== "up" ? { level: "red", text: "Landing page unreachable" } : null,
   },
 ];
 
@@ -84,7 +78,8 @@ interface ProductCardsProps {
 
 export default function ProductCards({ report }: ProductCardsProps) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 24 }}>
+    /* 1-col mobile → 2-col tablet (last card full-width) → 3-col desktop */
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
       {CARDS.map((card) => {
         const health = report[card.id];
         const st = STATUS_STYLES[health.status];
@@ -94,21 +89,14 @@ export default function ProductCards({ report }: ProductCardsProps) {
         return (
           <div
             key={card.id}
-            style={{
-              background: "#fff",
-              border: "1px solid #E4E4E7",
-              borderRadius: 12,
-              overflow: "hidden",
-            }}
+            className="sm:last:col-span-2 lg:last:col-span-1"
+            style={{ background: "#fff", border: "1px solid #E4E4E7", borderRadius: 12, overflow: "hidden" }}
           >
             {/* Header */}
             <div
               style={{
-                padding: "14px 16px",
-                borderBottom: "1px solid #F3F4F6",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
+                padding: "14px 16px", borderBottom: "1px solid #F3F4F6",
+                display: "flex", alignItems: "center", justifyContent: "space-between",
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -120,12 +108,9 @@ export default function ProductCards({ report }: ProductCardsProps) {
               </div>
               <span
                 style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  background: st.bg,
-                  color: st.color,
-                  borderRadius: 20,
-                  padding: "3px 10px",
+                  fontSize: 11, fontWeight: 600,
+                  background: st.bg, color: st.color,
+                  borderRadius: 20, padding: "3px 10px",
                 }}
               >
                 {st.label}
@@ -142,9 +127,7 @@ export default function ProductCards({ report }: ProductCardsProps) {
                   borderColor: alert.level === "red" ? "#FECACA" : "#FDE68A",
                   fontSize: 12,
                   color: alert.level === "red" ? "#EF4444" : "#D97706",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
+                  display: "flex", alignItems: "center", gap: 6,
                 }}
               >
                 <span>{alert.level === "red" ? "⚠️" : "⚡"}</span>
@@ -153,13 +136,7 @@ export default function ProductCards({ report }: ProductCardsProps) {
             )}
 
             {/* Metrics 2×2 */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 0,
-              }}
-            >
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
               {metrics.map((m, i) => (
                 <div
                   key={i}
@@ -177,14 +154,11 @@ export default function ProductCards({ report }: ProductCardsProps) {
               ))}
             </div>
 
-            {/* Footer */}
+            {/* Footer links — larger tap targets on mobile */}
             <div
               style={{
-                padding: "9px 16px",
                 borderTop: "1px solid #F3F4F6",
-                display: "flex",
-                gap: 12,
-                alignItems: "center",
+                display: "flex", alignItems: "center", flexWrap: "wrap",
               }}
             >
               {[
@@ -198,7 +172,11 @@ export default function ProductCards({ report }: ProductCardsProps) {
                   href={link.href}
                   target={link.label === "Open ↗" ? "_blank" : undefined}
                   rel={link.label === "Open ↗" ? "noopener noreferrer" : undefined}
-                  style={{ fontSize: 11, color: "#6B7280", textDecoration: "none", fontWeight: 500 }}
+                  className="min-h-[44px] sm:min-h-0 flex items-center"
+                  style={{
+                    fontSize: 11, color: "#6B7280", textDecoration: "none", fontWeight: 500,
+                    padding: "6px 12px",
+                  }}
                 >
                   {link.label}
                 </a>
